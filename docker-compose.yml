@@ -1,6 +1,14 @@
 services:
   openclaw-gateway:
-    image: ${OPENCLAW_IMAGE:-openclaw:local}
+    #image: ${OPENCLAW_IMAGE:-openclaw:local}
+    build:
+      context: .
+      network: host
+      dockerfile_inline: |
+        FROM ${OPENCLAW_IMAGE:-openclaw:local}
+        USER root
+        RUN apt update && apt install -y sshpass jq
+        USER node
     environment:
       HOME: /home/node
       TERM: xterm-256color
@@ -50,7 +58,15 @@ services:
       start_period: 20s
 
   openclaw-cli:
-    image: ${OPENCLAW_IMAGE:-openclaw:local}
+    #image: ${OPENCLAW_IMAGE:-openclaw:local}
+    build:
+      context: .
+      network: host
+      dockerfile_inline: |
+        FROM ${OPENCLAW_IMAGE:-openclaw:local}
+        USER root
+        RUN apt update && apt install -y sshpass jq
+        USER node
     network_mode: "service:openclaw-gateway"
     cap_drop:
       - NET_RAW
